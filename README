@@ -1,0 +1,26 @@
+失去了想象力，我们将一事无成。
+Imagine基于ImageMagick(http://www.imagemagick.org/)，以golang语言封装实现为一个图片处理服务器，接受客户端的图片处理请求，并返回处理后的图片，imagine运行在linux平台。
+Imagine追求目标是：
+实时：请求api接口中包含图片原始url和图片处理方法、参数，服务实时返回处理后的图片。
+高效：图片处理是cpu密集型的计算，imagine利用多进程并行计算，实现并发高效的处理，缩短处理时间；同时Imageine提供http头部缓存头，内部缓存，以及标准化的外部缓存接口，减少图片的重复处理概率。
+简单：api采用http+json,逻辑分层实现
+
+架构：
+                                           unix socket                   http,rpc,
+         http           in-process         [request]                     ...
+client<========>http-svr<=======> master  ===============> slave 1  <================> storage（various)
+                                          <=============== slave 2
+                                          [response]       slave 3
+										                   ...
+										                   slave n
+
+代码目录结构：
+/main      主程序
+/http      http server实现，基于fasthttp
+/magic     图片处理实现，基于ImageMagick
+/storage   图片缓存实现
+/api       对外接口
+/common    通用工具类代码
+
+
+
